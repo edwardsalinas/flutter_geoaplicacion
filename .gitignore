@@ -1,0 +1,64 @@
+# .gitignore
+# Files and directories that should be ignored by Git
+
+# Flutter-specific
+/.dart_tool/
+/.flutter-plugins
+/.flutter-plugins-dependencies
+/.packages
+/build/
+/ios/Flutter/.last_build_id
+
+# Android
+/android/app/src/main/res/drawable*/launch_background.png
+/android/app/src/main/res/drawable*/ic_*
+/android/gradle/
+/android/.gradle/
+/android/build/
+/android/app/build/
+/gradlew
+/gradlew.bat
+/local.properties
+
+# iOS
+/ios/Flutter/App.framework
+/ios/Flutter/Flutter.framework
+/ios/Flutter/Flutter.podspec
+/ios/Default-*.png
+/ios/Pods
+/ios/build
+/ios/.symlinks
+/ios/Flutter/.last_build_id
+
+# Dependencies
+**/node_modules/
+
+# API keys and sensitive files
+api_key.env
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Environment specific
+.env
+.env.local
+.env.production
+.env.development
+
+# Logs
+*.log
+**/logs
+
+# Coverage
+/coverage
+
+# Packages
+*.tar.gz
+*.zip
+
+# Secrets
+secrets/**
