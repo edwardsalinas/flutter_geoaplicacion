@@ -1,11 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await dotenv.load(fileName: "coordinates.env");
+
+  // Load the secret API key first
   await dotenv.load(fileName: "api_key.env");
+
+  // Manually load and parse the public coordinates file
+  try {
+    String coordinatesString = await rootBundle.loadString('coordinates.env');
+    for (String line in coordinatesString.split('\n')) {
+      if (line.contains('=')) {
+        List<String> parts = line.split('=');
+        if (parts.length == 2) {
+          dotenv.env[parts[0].trim()] = parts[1].trim();
+        }
+      }
+    }
+  } catch (e) {
+    print("Could not load coordinates.env: $e");
+  }
+
   runApp(const MyApp());
 }
 
@@ -34,7 +52,6 @@ class MapScreen extends StatefulWidget {
 
 class _MapScreenState extends State<MapScreen> {
   GoogleMapController? mapController;
-  late String apiKey;
   late double homeLat;
   late double homeLng;
   late double workLat;
@@ -47,10 +64,7 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   void _loadEnvironmentVariables() {
-    // Load API key from environment
-    apiKey = dotenv.env['GOOGLE_MAPS_API_KEY'] ?? '';
-    
-    // Load geographic coordinates from environment
+    // Load geographic coordinates from environment, with fallbacks just in case
     homeLat = double.tryParse(dotenv.env['HOME_LAT'] ?? '-33.4489') ?? -33.4489;
     homeLng = double.tryParse(dotenv.env['HOME_LNG'] ?? '-70.6693') ?? -70.6693;
     workLat = double.tryParse(dotenv.env['WORK_LAT'] ?? '-33.4295') ?? -33.4295;
@@ -63,16 +77,16 @@ class _MapScreenState extends State<MapScreen> {
         markerId: const MarkerId('home'),
         position: LatLng(homeLat, homeLng),
         infoWindow: const InfoWindow(
-          title: 'Home',
-          snippet: 'Your home location',
+          title: 'Casa',
+          snippet: 'Av. Beijing y Blanco Galindo (aprox)',
         ),
       ),
       Marker(
         markerId: const MarkerId('work'),
         position: LatLng(workLat, workLng),
         infoWindow: const InfoWindow(
-          title: 'Work',
-          snippet: 'Your work location',
+          title: 'Trabajo',
+          snippet: 'Jalasoft',
         ),
       ),
     };
@@ -91,7 +105,7 @@ class _MapScreenState extends State<MapScreen> {
         },
         initialCameraPosition: CameraPosition(
           target: LatLng(homeLat, homeLng),
-          zoom: 12.0,
+          zoom: 14.0,
         ),
         markers: _createMarkers(),
         mapType: MapType.normal,
